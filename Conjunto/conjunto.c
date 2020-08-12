@@ -38,7 +38,7 @@ Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
   if (!conjunto1.conjunto && !conjunto2.conjunto) {
     return newConjunto;
   }
-  while (aux1 != NULL || aux2 != NULL) {
+  while (aux1 || aux2) {
     if (!elemAux) {
       elemAux = malloc(sizeof(ElementoConjunto));
       if (aux1) {
@@ -79,7 +79,7 @@ Conjunto* conjunto_interseccion(Conjunto conjunto1, Conjunto conjunto2, char *no
   GList aux1 = conjunto1.conjunto, aux2 = conjunto2.conjunto;
   Conjunto* newConjunto = conjunto_create(nombreConjunto);
   ElementoConjunto *elemAux;
-  while (aux1 != NULL && aux2 != NULL){
+  while (aux1 && aux2){
     if (conjunto_elemento_interseca(((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer, ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
       elemAux = malloc(sizeof(ElementoConjunto));
       elemAux->extremoIzq = ((ElementoConjunto*)aux1->data)->extremoIzq > ((ElementoConjunto*)aux2->data)->extremoIzq ? ((ElementoConjunto*)aux1->data)->extremoIzq : ((ElementoConjunto*)aux2->data)->extremoIzq;
@@ -141,8 +141,7 @@ Conjunto* conjunto_resta(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
 
 void conjunto_imprimir(Conjunto conjunto) {
   GList aux = conjunto.conjunto;
-  do
-  {
+  do {
     if (((ElementoConjunto*)aux->data)->extremoIzq == ((ElementoConjunto*)aux->data)->extremoDer)
       printf("%d", ((ElementoConjunto*)aux->data)->extremoIzq);
     else
@@ -150,4 +149,5 @@ void conjunto_imprimir(Conjunto conjunto) {
     if (aux != conjunto.conjunto)
       print(",");
   } while (aux != conjunto.conjunto);
+  print("\n");
 }

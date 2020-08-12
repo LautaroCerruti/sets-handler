@@ -16,4 +16,4 @@ typedef struct {
   int extremoDer;
 } ElementoConjunto;
 
-#endif                            /* __CONJUNTO_H__ */
+#endif /* __CONJUNTO_H__ */

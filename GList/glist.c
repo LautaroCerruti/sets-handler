@@ -2,12 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct _GNode {
-  void *data;
-  struct _GNode *prev;
-  struct _GNode *next;
-};
-
 GList glist_create() {
   return NULL;
 }
