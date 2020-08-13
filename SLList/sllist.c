@@ -12,24 +12,36 @@ SLList sllist_create() {
 }
 
 void glist_destroy(SLList list, Destroy function) {
-  GNode *auxNode;
-  GNode *previous = list->prev;
-  for (; list != NULL; list = list->next) {
-    auxNode = list->next;
-    function(list->data);
-    free(list);
+  SLNode *auxNode = list;
+  if (list) {
+    list = list->next;
+    for (; list != NULL; list = list->next) {
+      function(auxNode->data);
+      free(auxNode);
+      auxNode = list;
+    }
+    function(auxNode->data);
+    free(auxNode);
   }
-  function(list->data);
-  free(list);
 }
 
 SLList sllist_insert_with_replace(SLList list, void *data, Compare compare, Destroy function) {
-  GNode *node = malloc(sizeof(GNode));
-  node->data = data;
-  for (; list->next != NULL && compare(list->data) list = list->next){
+  SLNode *node;
+  SLList aux = list;
+  for (; !compare(list->data, data) && list->next != NULL; list = list->next);
+  if (compare(list->data, data)) {
+    function(list->data);
+    list->data = data;
+  } else {
+    node = malloc(sizeof(SLNode));
+    node->data = data;
+    node->next = NULL;
+    list->next = node;
+  }
+  return aux;
+}
 
-  };
-  node->next = list;
-
-  return glist_concat(list, node);
+void* sllist_find(SLList list, void *data, Compare compare){
+  for (; list != NULL && !compare(list->data, data); list = list->next);
+  return (list ? list->data : NULL);
 }

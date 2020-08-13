@@ -46,8 +46,8 @@ char *leer_cadena(char *string) {
 
 
 int main() {
-//   char buffer[MAX_LINEA];
-//   buffer[0] = '\0';
+   char buffer[MAX_LINEA];
+   buffer[0] = '\0';
 //   ITree arbol = itree_crear(), nodo;
 //   Intervalo *intervalo;
 

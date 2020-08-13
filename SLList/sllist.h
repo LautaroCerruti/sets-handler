@@ -14,7 +14,7 @@ typedef int (*Compare) (void *data1, void *data2);
 typedef void (*Destroy) (void *data);
 
 /*
-  Crea una GList y le da valor NULL
+  Crea una SLList y le da valor NULL
 */
 SLList sllist_create();
 
@@ -25,15 +25,17 @@ SLList sllist_create();
 void sllist_destroy(SLList list, Destroy function);
 
 /*
-  Toma una lista y un dato, inserta el dato en la ultima posicion
-  de la lista y la devuelve.
+  Toma una lista, un dato, una funcion de comparacion y una funcion de destruccion.
+  Si encuentra un dato en la lista que evalue en verdaderoen la comparacion con el dato a guardar,
+  lo reemplaza, si no almacena el dato al final de la lista y la retorna
 */
-SLList sllist_insert_with_replace(SLList list, void *data, Compare);
+SLList sllist_insert_with_replace(SLList list, void *data, Compare compare, Destroy function);
 
 /*
-  Toma una lista y un dato, inserta el dato en la ultima posicion
-  de la lista y la devuelve.
+ Toma una lista, un void* y una funcion de comparacion
+  Busca en la lista el dato que evalue verdadero con el void*, en caso de contrarlo lo retorna,
+  en caso contrario retorna NULL
 */
-SLList sllist_find(SLList list, void *data, Compare);
+void* sllist_find(SLList list, void *data, Compare compare);
 
 #endif  /* __SLLIST_H__ */
