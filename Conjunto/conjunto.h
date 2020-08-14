@@ -16,4 +16,6 @@ typedef struct {
   int extremoDer;
 } ElementoConjunto;
 
+void conjunto_imprimir(Conjunto conjunto);
+
 #endif /* __CONJUNTO_H__ */
