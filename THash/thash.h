@@ -10,7 +10,7 @@
 
 typedef SLList* THash;
 
-typedef int (*FuncionHasheo) (void *dato);
+typedef int (*FuncionHasheo) (int tamanio_tabla, void *dato);
 
 THash tabla_hash_crear();
 
