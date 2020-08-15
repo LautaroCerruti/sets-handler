@@ -6,6 +6,7 @@
 #include <../THash/thash.h>
 #include <../Conjunto/conjunto.h>
 #define MAX_LINEA 1000
+#define MAX_NOMBRE_CONJUNTO 50
 
 int check_alphanumeric(char* string) {
   int ban = 1, i = 0;
@@ -69,10 +70,10 @@ void imprimir(THash tabla, char* string){
 }
 
 int main() {
-   char buffer[MAX_LINEA];
-   buffer[0] = '\0';
-   THash tabla = tabla_hash_crear();
-//   Intervalo *intervalo;
+  char buffer[MAX_LINEA], aux[MAX_NOMBRE_CONJUNTO], *nombre_primer_conjunto = NULL;
+  int i = 0, error =0;
+  buffer[0] = '\0';
+  THash tabla = tabla_hash_crear();
 
 //   printf("|: Union\n");
 //   printf("e: Eliminar\n");
@@ -81,50 +82,33 @@ int main() {
 //   printf("  'CaracterOperacion [Numero1, Numero2]'\n");
 //   printf("dfs, bfs: Mostrar arbol\n");
 //   printf("salir: Finalizar programa\n\n");
-while (strcmp(leer_cadena(buffer), "salir\0")) {
-  if (buffer[0] == 'i' && buffer[1] == 'm' && buffer[2] == 'p'
-    && buffer[3] == 'r' && buffer[4] == 'i' && buffer[5] == 'm'
-    && buffer[6] == 'i' && buffer[7] == 'r' && buffer[8] == ' ') 
-    imprimir(tabla, buffer + 9);
-  
-}
-//   while (strcmp(leer_cadena(buffer), "salir\0")) {
-//     if (!strcmp(buffer, "dfs\0")) {
-//       itree_recorrer_dfs(arbol, intervalo_imprimir);
-//       printf("\n");
-//     } else if (!strcmp(buffer, "bfs\0")) {
-//       itree_recorrer_bfs(arbol, intervalo_imprimir);
-//       printf("\n");
-//     } else {
-//       switch (obtener_operacion(buffer, &intervalo)) {
-//       case 'i':
-//         arbol = itree_insertar(arbol, intervalo);
-//         break;
-//       case 'e':
-//         arbol = itree_eliminar(arbol, intervalo);
-//         intervalo_destruir(intervalo);
-//         break;
-//       case '?':
-//         nodo = itree_intersecar(arbol, intervalo);
-//         if (nodo) {
-//           printf("  Si,");
-//           itree_aplicar_a_intervalo(nodo, intervalo_imprimir);
-//         } else
-//           printf("  No");
-//         printf("\n");
-//         intervalo_destruir(intervalo);
-//         nodo = NULL;
-//         break;
-//       case '\0':
-//         printf("  Comando Incorrecto\n");
-//         break;
-//       default:
-//         intervalo_destruir(intervalo);
-//         printf("  Comando Incorrecto\n");
-//         break;
-//       }
-//     }
-//   }
-//   itree_destruir(arbol, intervalo_destruir);
+  while (strcmp(leer_cadena(buffer), "salir\0")) {
+    if (buffer[0] == 'i' && buffer[1] == 'm' && buffer[2] == 'p'
+      && buffer[3] == 'r' && buffer[4] == 'i' && buffer[5] == 'm'
+      && buffer[6] == 'i' && buffer[7] == 'r' && buffer[8] == ' ') 
+      imprimir(tabla, buffer + 9);
+    else {
+      for(;i<MAX_NOMBRE_CONJUNTO && buffer[i] != '=' && buffer[i] != '\0'; ++i)
+        aux[i] = buffer[i];
+      if (buffer[i] == '=' && i > 0) {
+        if(aux[i-1] == ' ')
+          aux[i-1] = '\0';
+        else
+          aux[i] = '\0';
+        if (check_alphanumeric(aux)) {
+          nombre_primer_conjunto = malloc(sizeof(char)*strlen(aux));
+          strcpy(nombre_primer_conjunto, aux);
+        } else
+          error = 1;
+      } else
+        error = 1;
+      if (!error) {
+        ++i;
+        if ()
+      }
+    }
+    if (error)
+      printf("Entrada incorrecta \n");
+  }
   return 0;
 }
