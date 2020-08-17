@@ -1,10 +1,10 @@
 #ifndef __THASH_H__
 #define __THASH_H__
 
+#include "../SLList/sllist.h"
 #include <stddef.h>
 #include <time.h>
 #include <stdio.h>
-#include <../SLList/sllist.h>
 
 #define TAMANIO_TABLA 499
 

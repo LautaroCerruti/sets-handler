@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct _SLNode SLNode;
 

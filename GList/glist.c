@@ -40,6 +40,27 @@ GList glist_concat(GList list1, GList list2) {
   return list1;
 }
 
+GNode *glist_pop(GList *list, int pos) {
+  GNode *node = glist_create();
+  if (list) {
+    if ((*list)->next == *list) {
+      node = *list;
+      list = NULL;
+    } else {
+      node = *list;
+      for (; node->next != (*list) && pos != 0; node = node->next, --pos);
+      if (pos == 0) {
+        *list = node->next;
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+        node->next = node;
+        node->prev = node;
+      }
+    }
+  }
+  return node;
+}
+
 GList glist_merge(GList list1, GList list2, Compare function) {
   if (!list1)
     return list2;

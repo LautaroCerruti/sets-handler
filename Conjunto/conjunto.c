@@ -1,22 +1,24 @@
 #include "conjunto.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 int conjunto_elemento_interseca(int izqElem1, int derElem1, int izqElem2, int derElem2){
 return derElem1 >= izqElem2 && izqElem1 <= derElem2;
 }
 
-void conjunto_destroy_elemento(ElementoConjunto* elem){
-  free(elem);
+int conjunto_comparar_elementos_by_extremo_izquierdo(void* elem1, void* elem2) {
+  return ((ElementoConjunto *)elem1)->extremoIzq - ((ElementoConjunto *)elem2)->extremoIzq;
 }
 
-void conjunto_destroy_conjunto(Conjunto* conjunto){
+void conjunto_destroy_elemento(void* elem){
+  free((ElementoConjunto*) elem);
+}
+
+void conjunto_destroy_conjunto(void* conjunto){
   if (conjunto) {
-    if (conjunto->nombre)
-      free(conjunto->nombre);
-    if (conjunto->conjunto)
-      glist_destroy(conjunto->conjunto, conjunto_destroy_elemento);
-    free(conjunto);
+    if (((Conjunto*)conjunto)->nombre)
+      free(((Conjunto*)conjunto)->nombre);
+    if (((Conjunto*)conjunto)->conjunto)
+      glist_destroy(((Conjunto*)conjunto)->conjunto, conjunto_destroy_elemento);
+    free(((Conjunto*)conjunto));
   }
 }
 
@@ -141,10 +143,9 @@ Conjunto* conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
 }
 
 Conjunto* conjunto_resta(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto) {
-  GList aux1 = conjunto1.conjunto, aux2 = conjunto2.conjunto;
-  ElementoConjunto *elemAux;
   Conjunto* complementoConjunto2 = conjunto_complemento(conjunto2, NULL);
   Conjunto* newConjunto = conjunto_interseccion(conjunto1, *complementoConjunto2, NULL);
+  newConjunto->nombre = nombreConjunto;
   conjunto_destroy_conjunto(complementoConjunto2);
   return newConjunto;
 }
@@ -157,20 +158,20 @@ void conjunto_imprimir(Conjunto conjunto) {
     else
       printf("%d:%d", ((ElementoConjunto*)aux->data)->extremoIzq, ((ElementoConjunto*)aux->data)->extremoDer);
     if (aux != conjunto.conjunto)
-      print(",");
+      printf(",");
   } while (aux != conjunto.conjunto);
-  print("\n");
+  printf("\n");
 }
 
-int conjunto_compara_nombre(Conjunto* conjunto1, Conjunto* conjunto2) {
-  return !strcmp(conjunto1->nombre, conjunto2->nombre);
+int conjunto_compara_nombre(void* conjunto1, void* conjunto2) {
+  return !strcmp(((Conjunto*)conjunto1)->nombre, ((Conjunto*)conjunto2)->nombre);
 }
 
-int conjunto_hash(int tamanio_tabla, Conjunto* conjunto1) {
+int conjunto_hash(int tamanio_tabla, void* conjunto1) {
   unsigned long long int value_hash = 0;
   int  i = 0;
-  for (; conjunto1->nombre[i] != '\0'; ++i)
-    value_hash += conjunto1->nombre[i] * pow(2, (i % 10));
+  for (; ((Conjunto*)conjunto1)->nombre[i] != '\0'; ++i)
+    value_hash += ((Conjunto*)conjunto1)->nombre[i] * pow(2, (i % 10));
   return (int) (value_hash % tamanio_tabla);
 }
 
@@ -197,8 +198,4 @@ Conjunto* conjunto_normalize(Conjunto* conjunto) {
       aux = aux->next;
   }
   return conjunto;
-}
-
-int conjunto_comparar_elementos_by_extremo_izquierdo(void* elem1, void* elem2) {
-  return ((ElementoConjunto *)elem1)->extremoIzq - ((ElementoConjunto *)elem2)->extremoIzq;
 }

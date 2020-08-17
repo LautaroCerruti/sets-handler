@@ -1,6 +1,4 @@
 #include "sllist.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 struct _SLNode {
   void *data;
@@ -11,7 +9,7 @@ SLList sllist_create() {
   return NULL;
 }
 
-void glist_destroy(SLList list, Destroy function) {
+void sllist_destroy(SLList list, Destroy function) {
   SLNode *auxNode = list;
   if (list) {
     list = list->next;

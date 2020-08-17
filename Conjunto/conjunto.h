@@ -1,10 +1,14 @@
 #ifndef __CONJUNTO_H__
 #define __CONJUNTO_H__
 
+#include "../GList/glist.h"
 #include <stddef.h>
-#include <../GList/glist.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <limits.h>
 
 typedef struct {
   char *nombre;
@@ -22,11 +26,11 @@ Conjunto* conjunto_create_empty(char *nombreConjunto);
 
 Conjunto* conjunto_create_extension(char *nombreConjunto, int n1, int n2);
 
-void conjunto_destroy_conjunto(Conjunto* conjunto);
+void conjunto_destroy_conjunto(void* conjunto);
 
-int conjunto_compara_nombre(Conjunto* conjunto1, Conjunto* conjunto2);
+int conjunto_compara_nombre(void* conjunto1, void* conjunto2);
 
-int conjunto_hash(int tamanio_tabla, Conjunto* conjunto1);
+int conjunto_hash(int tamanio_tabla, void* conjunto1);
 
 Conjunto* conjunto_agregar_elemento(Conjunto* conjunto, int numero);
 
