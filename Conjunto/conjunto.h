@@ -32,4 +32,11 @@ Conjunto* conjunto_agregar_elemento(Conjunto* conjunto, int numero);
 
 Conjunto* conjunto_normalize(Conjunto* conjunto);
 
+Conjunto* conjunto_complemento(Conjunto conjunto, char *nombreConjunto);
+
+Conjunto* conjunto_resta(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto);
+
+Conjunto* conjunto_interseccion(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto);
+
+Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto);
 #endif /* __CONJUNTO_H__ */
