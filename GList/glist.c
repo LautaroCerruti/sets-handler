@@ -19,11 +19,10 @@ void glist_destroy(GList list, Destroy function) {
 }
 
 GList glist_insert_last_position(GList list, void *data) {
-  GNode *node = malloc(sizeof(GNode));
+  GList node = malloc(sizeof(GNode));
   node->data = data;
   node->prev = node;
   node->next = node;
-
   return glist_concat(list, node);
 }
 

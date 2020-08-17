@@ -3,8 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "../THash/thash.h"
-#include "../Conjunto/conjunto.h"
+#include "./THash/thash.h"
+#include "./Conjunto/conjunto.h"
 #define MAX_LINEA 1000
 #define MAX_NOMBRE_CONJUNTO 50
 
@@ -27,7 +27,7 @@ int hasheo_string(int tamanio_tabla, void *valorVoid) {
 }
 
 int comparar_conjunto_string(void* conjunto, void* string) {
-  return !strcmp(((Conjunto*)conjunto)->nombre, (char*)string);
+  return strcmp(((Conjunto*)conjunto)->nombre, (char*)string) == 0 ? 1 : 0;
 }
 
 /*
@@ -83,8 +83,8 @@ int inserta_conjunto_comprension(THash tabla, char* string, char* nombre_conjunt
   if (*string == ' ')
     ++string;
   numero1 = strtod(string, &resto);
-  
-  if (string == resto || (*resto != ' ' && *resto != '<')) 
+
+  if (string == resto || (*resto != ' ' && *resto != '<'))
     return 1;
   string = resto;
   if (*string == ' ')
@@ -111,9 +111,9 @@ int inserta_conjunto_comprension(THash tabla, char* string, char* nombre_conjunt
   if (*string == ' ')
     ++string;
   numero2 = strtod(string, &resto);
-  printf("%c\n", *resto);
-  if (string == resto || (*resto != ' ' && *resto != '}')) 
+  if (string == resto || (*resto != ' ' && *resto != '}'))
     return 1;
+  string = resto;
   if (*string == ' ')
     ++string;
   if (*string != '}')
@@ -129,18 +129,25 @@ int inserta_conjunto_extension(THash tabla, char* string, char* nombre_conjunto)
   Conjunto *conjunto = conjunto_create_empty(nombre_conjunto);
   while (*string !='}' && *string !='\0' && !bandera) {
     numero = strtod(string, &resto);
-    if (string == resto || *resto != ' ' || *resto != ',') 
+    if (string == resto || (*resto != ' ' && *resto != ',' && *resto != '}'))
       bandera = 1;
     else
     {
-      while(*string == ' ' || *string == ',')
+      string = resto;
+      if (*string == ' ')
+        ++string;
+      if (*string == ',')
+        ++string;
+      else if (*string !='}')
+        bandera = 1;
+      if (*string == ' ')
         ++string;
       if (!isdigit(*string) && *string !='}')
         bandera = 1;
     }
     if (!bandera) {
       conjunto = conjunto_agregar_elemento(conjunto, numero);
-    } 
+    }
   }
   if (bandera || (*string =='}' && *(string+1)!='\0')) {
     conjunto_destroy_conjunto(conjunto);
@@ -157,13 +164,13 @@ void realizar_operacion(THash tabla, char operacion, char* nombre_primer_conjunt
   if (operacion != '~')
     segundoConjuntoOperacion = tabla_buscar_elemento(tabla, nombre_tercer_conjunto, hasheo_string, comparar_conjunto_string);
   if ((primerConjuntoOperacion && operacion == '~') || (primerConjuntoOperacion && segundoConjuntoOperacion)){
-    if (operacion == '~') 
+    if (operacion == '~')
       conjuntoResultado = conjunto_complemento(*primerConjuntoOperacion, nombre_primer_conjunto);
-    if (operacion == '|') 
+    if (operacion == '|')
       conjuntoResultado = conjunto_union(*primerConjuntoOperacion, *segundoConjuntoOperacion, nombre_primer_conjunto);
-    if (operacion == '-') 
+    if (operacion == '-')
       conjuntoResultado = conjunto_resta(*primerConjuntoOperacion, *segundoConjuntoOperacion, nombre_primer_conjunto);
-    if (operacion == '&') 
+    if (operacion == '&')
       conjuntoResultado = conjunto_interseccion(*primerConjuntoOperacion, *segundoConjuntoOperacion, nombre_primer_conjunto);
   tabla = tabla_agregar_elemento(tabla, conjuntoResultado, conjunto_hash, conjunto_compara_nombre, conjunto_destroy_conjunto);
   } else
@@ -190,7 +197,7 @@ int main() {
     nombre_tercer_conjunto = NULL;
     if (buffer[0] == 'i' && buffer[1] == 'm' && buffer[2] == 'p'
       && buffer[3] == 'r' && buffer[4] == 'i' && buffer[5] == 'm'
-      && buffer[6] == 'i' && buffer[7] == 'r' && buffer[8] == ' ') 
+      && buffer[6] == 'i' && buffer[7] == 'r' && buffer[8] == ' ')
       imprimir(tabla, buffer + 9);
     else {
       for(i = 0;i<MAX_NOMBRE_CONJUNTO && buffer[i] != '=' && buffer[i] != '\0'; ++i){
@@ -219,19 +226,18 @@ int main() {
             error = inserta_conjunto_comprension(tabla, buffer+i, nombre_primer_conjunto);
           } else if (isdigit(buffer[i])) {
             error = inserta_conjunto_extension(tabla, buffer+i, nombre_primer_conjunto);
-          } else 
+          } else
             error = 1;
         } else if (buffer[i]=='~') {
           bufferAux = buffer + (i+1);
           operacion = buffer[i];
 
-          for(i = 0;i<MAX_NOMBRE_CONJUNTO && *bufferAux != '-' && *bufferAux != '&' && *bufferAux != '|' && *bufferAux != '\0' && !error; ++bufferAux) {
+          for(i = 0;i<MAX_NOMBRE_CONJUNTO && *bufferAux != '\0' && !error; ++bufferAux) {
             aux[i] = *bufferAux;
             ++i;
           }
-            
-          if ((*bufferAux == '-' || *bufferAux == '&' || *bufferAux == '|') && i > 0 && !error) {
-            operacion = *bufferAux;
+
+          if (*bufferAux == '\0' && i > 0 && !error) {
             if(aux[i-1] == ' ')
               aux[i-1] = '\0';
             else
@@ -245,17 +251,17 @@ int main() {
             error = 1;
 
           // Complemento
-          realizar_operacion(tabla, operacion, nombre_primer_conjunto, nombre_segundo_conjunto, nombre_tercer_conjunto);
+          if (!error)
+            realizar_operacion(tabla, operacion, nombre_primer_conjunto, nombre_segundo_conjunto, nombre_tercer_conjunto);
         } else if (!isalnum(buffer[i]))
           error = 1;
         else {
           bufferAux = buffer + i;
-          printf("PIJAAAAA\n");
           for(i = 0;i<MAX_NOMBRE_CONJUNTO && *bufferAux != '-' && *bufferAux != '&' && *bufferAux != '|' && *bufferAux != '\0' && !error; ++bufferAux) {
             aux[i] = *bufferAux;
             ++i;
           }
-            
+
           if ((*bufferAux == '-' || *bufferAux == '&' || *bufferAux == '|') && i > 0 && !error) {
             operacion = *bufferAux;
             if(aux[i-1] == ' ')
@@ -274,7 +280,7 @@ int main() {
             ++bufferAux;
             if (*bufferAux == ' ')
               ++bufferAux;
-            
+
             for(i = 0;i<MAX_NOMBRE_CONJUNTO && *bufferAux != '\0' && !error; ++bufferAux) {
               aux[i] = *bufferAux;
               ++i;
@@ -292,9 +298,9 @@ int main() {
                 error = 1;
             } else
               error = 1;
+            if (!error)
+              realizar_operacion(tabla, operacion, nombre_primer_conjunto, nombre_segundo_conjunto, nombre_tercer_conjunto);
 
-            realizar_operacion(tabla, operacion, nombre_primer_conjunto, nombre_segundo_conjunto, nombre_tercer_conjunto);
-            
           }
           if (nombre_segundo_conjunto)
             free(nombre_segundo_conjunto);

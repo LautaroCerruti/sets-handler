@@ -24,8 +24,14 @@ void sllist_destroy(SLList list, Destroy function) {
 }
 
 SLList sllist_insert_with_replace(SLList list, void *data, Compare compare, Destroy function) {
-  SLNode *node;
+  SLNode *node = NULL;
   SLList aux = list;
+  if (!list) {
+    node = malloc(sizeof(SLNode));
+    node->data = data;
+    node->next = NULL;
+    return node;
+  }
   for (; !compare(list->data, data) && list->next != NULL; list = list->next);
   if (compare(list->data, data)) {
     function(list->data);

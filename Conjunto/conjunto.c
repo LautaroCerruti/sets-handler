@@ -13,18 +13,20 @@ void conjunto_destroy_elemento(void* elem){
 }
 
 void conjunto_destroy_conjunto(void* conjunto){
-  if (conjunto) {
-    if (((Conjunto*)conjunto)->nombre)
-      free(((Conjunto*)conjunto)->nombre);
-    if (((Conjunto*)conjunto)->conjunto)
-      glist_destroy(((Conjunto*)conjunto)->conjunto, conjunto_destroy_elemento);
-    free(((Conjunto*)conjunto));
+  Conjunto* aux = (Conjunto*)conjunto;
+  if (aux) {
+    if (aux->nombre)
+      free(aux->nombre);
+    if (aux->conjunto)
+      glist_destroy(aux->conjunto, conjunto_destroy_elemento);
+    free(aux);
   }
 }
 
 Conjunto* conjunto_create_empty(char *nombreConjunto){
   Conjunto* conjunto = malloc(sizeof(Conjunto));
   conjunto->nombre = nombreConjunto;
+  conjunto->conjunto = glist_create();
   return conjunto;
 }
 
@@ -41,6 +43,10 @@ Conjunto* conjunto_create_extension(char *nombreConjunto, int n1, int n2){
 void conjunto_extension_elemento(ElementoConjunto* elemento, ElementoConjunto* extension) {
   elemento->extremoIzq = extension->extremoIzq < elemento->extremoIzq ? extension->extremoIzq : elemento->extremoIzq;
   elemento->extremoDer = extension->extremoDer > elemento->extremoDer ? extension->extremoDer : elemento->extremoDer;
+}
+
+int extremo_mas_uno(int valor){
+  return valor == INT_MAX ? valor : valor + 1;
 }
 
 Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto) {
@@ -67,13 +73,13 @@ Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
           aux2 = NULL;
       }
     } else {
-      if (conjunto_elemento_interseca(elemAux->extremoDer + 1, elemAux->extremoIzq + 1, ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer) 
-        || conjunto_elemento_interseca(elemAux->extremoDer + 1, elemAux->extremoIzq + 1, ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
-        if (conjunto_elemento_interseca(elemAux->extremoDer + 1, elemAux->extremoIzq + 1, ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)) {
+      if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)
+        || conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
+        if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)) {
           conjunto_extension_elemento(elemAux, aux1->data);
           aux1 = aux1->next != conjunto1.conjunto ? aux1->next : NULL;
         }
-        if (conjunto_elemento_interseca(elemAux->extremoDer + 1, elemAux->extremoIzq + 1, ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
+        if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
           conjunto_extension_elemento(elemAux, aux2->data);
           aux2 = aux2->next != conjunto2.conjunto ? aux2->next : NULL;
         }
@@ -117,10 +123,11 @@ Conjunto* conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
     elemAux->extremoIzq = INT_MIN;
     elemAux->extremoDer = INT_MAX;
     newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
+    return newConjunto;
   }
   if (((ElementoConjunto*)aux->data)->extremoIzq != INT_MIN) {
     elemAux->extremoIzq = INT_MIN;
-    elemAux->extremoDer = ((ElementoConjunto*)aux->data)->extremoIzq;
+    elemAux->extremoDer = ((ElementoConjunto*)aux->data)->extremoIzq - 1;
     newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
     aux = aux->next;
   } else {
@@ -128,14 +135,14 @@ Conjunto* conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
   }
   while (aux != conjunto.conjunto) {
     elemAux = malloc(sizeof(ElementoConjunto));
-    elemAux->extremoIzq = ((ElementoConjunto*)aux->prev->data)->extremoDer;
-    elemAux->extremoDer = ((ElementoConjunto*)aux->data)->extremoIzq;
+    elemAux->extremoIzq = ((ElementoConjunto*)aux->prev->data)->extremoDer + 1;
+    elemAux->extremoDer = ((ElementoConjunto*)aux->data)->extremoIzq - 1;
     newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
     aux = aux->next;
   };
   if (((ElementoConjunto*)aux->prev->data)->extremoDer != INT_MAX) {
     elemAux = malloc(sizeof(ElementoConjunto));
-    elemAux->extremoIzq = ((ElementoConjunto*)aux->prev->data)->extremoDer;
+    elemAux->extremoIzq = ((ElementoConjunto*)aux->prev->data)->extremoDer + 1;
     elemAux->extremoDer = INT_MAX;
     newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
   }
@@ -152,14 +159,19 @@ Conjunto* conjunto_resta(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
 
 void conjunto_imprimir(Conjunto conjunto) {
   GList aux = conjunto.conjunto;
-  do {
-    if (((ElementoConjunto*)aux->data)->extremoIzq == ((ElementoConjunto*)aux->data)->extremoDer)
-      printf("%d", ((ElementoConjunto*)aux->data)->extremoIzq);
-    else
-      printf("%d:%d", ((ElementoConjunto*)aux->data)->extremoIzq, ((ElementoConjunto*)aux->data)->extremoDer);
-    if (aux != conjunto.conjunto)
-      printf(",");
-  } while (aux != conjunto.conjunto);
+  if (conjunto.conjunto) {
+    do {
+        if (((ElementoConjunto*)aux->data)->extremoIzq == ((ElementoConjunto*)aux->data)->extremoDer)
+          printf("%d", ((ElementoConjunto*)aux->data)->extremoIzq);
+        else
+          printf("%d:%d", ((ElementoConjunto*)aux->data)->extremoIzq, ((ElementoConjunto*)aux->data)->extremoDer);
+        aux = aux->next;
+        if (aux != conjunto.conjunto)
+          printf(",");
+    } while (aux != conjunto.conjunto);
+  } else
+    printf("conjunto vacio");
+
   printf("\n");
 }
 
@@ -185,9 +197,9 @@ Conjunto* conjunto_agregar_elemento(Conjunto* conjunto, int numero) {
 
 Conjunto* conjunto_normalize(Conjunto* conjunto) {
   conjunto->conjunto = glist_merge_sort(conjunto->conjunto, conjunto_comparar_elementos_by_extremo_izquierdo);
-  GList aux = conjunto->conjunto, nodoBorrar;
+  GList aux = conjunto->conjunto, nodoBorrar = NULL;
   while (aux != conjunto->conjunto->prev) {
-    if (((ElementoConjunto *)aux->next->data)->extremoIzq - 1 == ((ElementoConjunto *)aux->data)->extremoDer) {
+    if (((ElementoConjunto *)aux->next->data)->extremoIzq - 1 == ((ElementoConjunto *)aux->data)->extremoDer || ((ElementoConjunto *)aux->next->data)->extremoIzq == ((ElementoConjunto *)aux->data)->extremoDer) {
       ((ElementoConjunto *)aux->data)->extremoDer = ((ElementoConjunto *)aux->next->data)->extremoDer;
       aux->next->next->prev = aux;
       nodoBorrar = aux->next;

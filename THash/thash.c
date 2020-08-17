@@ -11,13 +11,14 @@ THash tabla_hash_crear(){
 }
 
 THash tabla_agregar_elemento(SLList* tabla, void* dato, FuncionHasheo hasheo, Compare comparar, Destroy destruir) {
-    int valhasheo = hasheo(TAMANIO_TABLA, dato);
-    tabla[valhasheo] = sllist_insert_with_replace(tabla[valhasheo], dato, comparar, destruir);
-    return tabla;
+  int valhasheo = hasheo(TAMANIO_TABLA, dato);
+  tabla[valhasheo] = sllist_insert_with_replace(tabla[valhasheo], dato, comparar, destruir);
+  return tabla;
 }
 
 void* tabla_buscar_elemento(SLList* tabla, void* dato, FuncionHasheo hasheo, Compare comparar) {
-    return sllist_find(tabla[hasheo(TAMANIO_TABLA, dato)], dato, comparar);
+    int valhasheo = hasheo(TAMANIO_TABLA, dato);
+    return sllist_find(tabla[valhasheo], dato, comparar);
 }
 
 void tabla_destruir(SLList* tabla, Destroy destruir) {
