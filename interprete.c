@@ -202,8 +202,10 @@ void realizar_operacion(THash tabla, char operacion, char* nombre_primer_conjunt
       conjuntoResultado = conjunto_interseccion(*primerConjuntoOperacion, *segundoConjuntoOperacion, nombre_primer_conjunto);
   // realiza la operacion correspondiente y agrega el conjunto a la tabla
   tabla = tabla_agregar_elemento(tabla, conjuntoResultado, conjunto_hash, conjunto_compara_nombre, conjunto_destroy_conjunto);
-  } else // si no encuentra algun conjunto lo informa
+  } else { // si no encuentra algun conjunto lo informa
     printf("Conjunto inexistente\n");
+    free(nombre_primer_conjunto);
+  }
 }
 
 int main() {
@@ -238,7 +240,7 @@ int main() {
         else
           aux[i] = '\0';
         if (check_alphanumeric(aux)) {
-          nombre_primer_conjunto = malloc(sizeof(char)*strlen(aux));
+          nombre_primer_conjunto = malloc(sizeof(char)*(strlen(aux)+1));
           strcpy(nombre_primer_conjunto, aux);
         } else
           error = 1;
@@ -270,7 +272,7 @@ int main() {
             else
               aux[i] = '\0';
             if (check_alphanumeric(aux)) {
-              nombre_segundo_conjunto = malloc(sizeof(char)*strlen(aux));
+              nombre_segundo_conjunto = malloc(sizeof(char)*(strlen(aux)+1));
               strcpy(nombre_segundo_conjunto, aux);
             } else
               error = 1;
@@ -294,7 +296,7 @@ int main() {
             else
               aux[i] = '\0';
             if (check_alphanumeric(aux)) {
-              nombre_segundo_conjunto = malloc(sizeof(char)*strlen(aux));
+              nombre_segundo_conjunto = malloc(sizeof(char)*(strlen(aux)+1));
               strcpy(nombre_segundo_conjunto, aux);
             } else
               error = 1;
@@ -332,8 +334,10 @@ int main() {
       free(nombre_segundo_conjunto); // libera la memoria de los nombres de los conjuntos a operar
     if (nombre_tercer_conjunto)
       free(nombre_tercer_conjunto); // libera la memoria de los nombres de los conjuntos a operar
-    if (error)
+    if (error) {
       printf("Entrada incorrecta\n");
+      free(nombre_primer_conjunto);
+    }
   }
   tabla_destruir(tabla, conjunto_destroy_conjunto); // destruye la tabla
   return 0;
