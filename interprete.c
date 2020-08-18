@@ -262,6 +262,8 @@ int main() {
         } else if (buffer[i]=='~') { // si es un complemento
           bufferAux = buffer + (i+1);
           operacion = buffer[i];
+          if (*bufferAux == ' ')
+            ++bufferAux;
           for(i = 0;i<MAX_NOMBRE_CONJUNTO && *bufferAux != '\0' && !error; ++bufferAux) {
             aux[i] = *bufferAux; // lee el conjunto a operar
             ++i;
