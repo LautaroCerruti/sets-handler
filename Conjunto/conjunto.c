@@ -234,7 +234,7 @@ Conjunto* conjunto_interseccion(Conjunto conjunto1, Conjunto conjunto2, char *no
   ElementoConjunto *elemAux;
   while (aux1 && aux2) { // mientras haya elementos en ambos conjuntos
     if (conjunto_elemento_valores_interseca(((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer, ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
-      elemAux = malloc(sizeof(ElementoConjunto)); // si los mimos intersecan, creamos un nuevo nodo con el intervalo intersecado
+      elemAux = malloc(sizeof(ElementoConjunto)); // si los mismos intersecan, creamos un nuevo nodo con el intervalo intersecado
       elemAux->extremoIzq = ((ElementoConjunto*)aux1->data)->extremoIzq > ((ElementoConjunto*)aux2->data)->extremoIzq ? ((ElementoConjunto*)aux1->data)->extremoIzq : ((ElementoConjunto*)aux2->data)->extremoIzq;
       elemAux->extremoDer = ((ElementoConjunto*)aux1->data)->extremoDer < ((ElementoConjunto*)aux2->data)->extremoDer ? ((ElementoConjunto*)aux1->data)->extremoDer : ((ElementoConjunto*)aux2->data)->extremoDer;
       newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux); // insertamos este nodo

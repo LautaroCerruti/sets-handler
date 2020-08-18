@@ -318,7 +318,7 @@ int main() {
               else
                 aux[i] = '\0';
               if (check_alphanumeric(aux)) {
-                nombre_tercer_conjunto = malloc(sizeof(char)*strlen(aux));
+                nombre_tercer_conjunto = malloc(sizeof(char)*(strlen(aux)+1));
                 strcpy(nombre_tercer_conjunto, aux);
               } else
                 error = 1;
