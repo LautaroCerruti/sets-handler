@@ -1,0 +1,215 @@
+\documentclass[]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+	framexleftmargin=5mm, frame=shadowbox, rulesepcolor=\color{gray}
+}
+
+\lstset{style=mystyle}
+%opening
+\begin{document}
+	
+\title{TP Árbol De Intervalos}
+\author{Cassinerio Marcos - Cerruti Lautaro}
+\date{Junio 7, 2020\footnote{Updated \today}}
+\maketitle
+\newpage
+
+\section{Introducción}
+El objetivo de este trabajo fue implementar un árbol AVL de Intervalos. Adicionalmente implementamos un intérprete para poder utilizar el árbol y sus funciones desde la entrada estándar. 
+
+\section{Compilado y ejecucion}
+Para compilar el proyecto abrimos una terminal, y una vez ubicados en el directorio del proyecto, ejecutamos el comando \verb|make|. Esto nos generará el ejecutable del intérprete.\\\\
+El mismo lo corremos con: 
+
+\verb|./interprete|
+\\\\Este programa nos permitirá ingresar comandos para manipular un árbol. Los comando aceptados son:
+ \begin{itemize}
+ 	\item \verb|i [a, b]|: inserta el intervalo [a, b] en el árbol. Ej: \verb|i [5.4, 6.3]|.
+ 	\item \verb|e [a, b]|: elimina el intervalo [a, b] del árbol. Ej: \verb|e [2.2, 1e4]|.
+ 	\item \verb|? [a, b]|: interseca el intervalo [a, b] con los intervalos del árbol. Ej: \verb|? [-1, 0.5]|.
+ 	\item \verb|dfs|: imprime los intervalos del árbol con recorrido primero en profundidad.
+ 	\item \verb|bfs|: imprime los intervalos del árbol con recorrido primero a lo ancho.
+ 	\item \verb|salir|: destruye el árbol y termina el programa.
+ \end{itemize}
+Los primeros 3 comandos tienen que respetar el formato \verb|caracterOperacion [a, b]|.
+\section{Organizacion de los archivos}
+El programa se divide en 4 partes: Intervalo, Árbol de Intervalos, Cola (Queue) e intérprete\\
+Por un lado tenemos la implementación y declaración de Queue en los archivos \verb|queue.c| y \verb|queue.h| respectivamente.\\
+Por otro lado tenemos Intervalo hecho de la misma manera, en los archivos \verb|intervalo.c| y \verb|intervalo.h|.\\
+Luego tenemos al Árbol de Intervalos que hace uso de las dependecias queue e intervalo. Su implementación y declaración se encuentra en los archivos \verb|itree.c| y \verb|itree.h|.\\
+Finalmente tenemos en el archivo \verb|interprete.c| el intéprete que es nuestra interfaz del progragama para manipular los Árboles de Intervalos.
+\newpage
+\section{Implementaciones y estructuras}
+\subsection{Queue}
+La implementación de Queue esta basada en una Lista Doblemente Enlazada Circular, definida de la siguiente forma:
+
+\begin{lstlisting}[language=C]
+struct _QNode {
+  void *dato;
+  struct _QNode *ant;
+  struct _QNode *sig;
+};
+
+typedef struct _QNode QNode;
+
+typedef QNode *Queue;
+\end{lstlisting}
+En su cabecera declaramos sus únicas 3 funciones:
+
+\verb|queue_crear|
+
+\verb|queue_pop|
+
+\verb|queue_push|
+
+\verb|queue_destruir|
+\\\\
+La función \verb|queue_destruir| nunca es utilizada, pero para que la implentación de la Cola sea general se vio la necesidad de hacerla.\\
+Todas las implementaciones se encuentran en \verb|queue.c|.
+\subsection{Intervalo}
+La declaración de intervalo es la siguiente:
+
+\begin{lstlisting}[language=C]
+struct _Intervalo{
+  double extremoIzq;
+  double extremoDer;
+};
+
+typedef struct _Intervalo Intervalo;
+\end{lstlisting}
+En su cabecera declaramos las siguientes funciones:
+
+\verb|intervalo_crear|
+
+\verb|intervalo_destruir|
+
+\verb|intervalo_extremo_izq|
+
+\verb|intervalo_extremo_der|
+
+\verb|intervalo_valido|
+
+\verb|intervalo_interseca|
+
+\verb|intervalo_imprimir|\\\\
+Sus implentaciones se encuentran en \verb|intervalo.c|.
+\newpage
+\subsection{ITree}
+El Árbol de Intervalos se encuentra definido de la siguiente manera:
+
+\begin{lstlisting}[language=C]
+struct _INodo {
+  Intervalo *intervalo;
+  double maxExtremoDer;
+  int altura;
+  struct _INodo *izq;
+  struct _INodo *der;
+};
+
+typedef struct _INodo INodo;
+
+typedef INodo *ITree;
+\end{lstlisting}
+En su archivo cabecera se encuentran declaradas las siguientes funciones:
+
+\verb|itree_crear|
+
+\verb|itree_destruir|
+
+\verb|itree_altura|
+
+\verb|itree_insertar|
+
+\verb|itree_eliminar|
+
+\verb|itree_intersecar|
+
+\verb|itree_recorrer_dfs|
+
+\verb|itree_recorrer_bfs|
+
+\verb|itree_aplicar_a_intervalo|
+\\
+Sus implementaciones se encuentran en el archivo \verb|itree.c|, junto con las implementaciones de las funciones:
+
+\verb|itree_nuevo_nodo|
+
+\verb|itree_calcular_max_extremo_der|
+
+\verb|itree_calcular_altura|
+
+\verb|itree_actualizar_datos|
+
+\verb|rotacion_izquierda|
+
+\verb|rotacion_derecha|
+
+\verb|itree_balance|
+
+\verb|itree_balancear|
+
+\verb|itree_obtener_menor|
+
+\subsection{Interprete}
+El interprete se encuentra el main del programa, este se encarga de leer la entrada estandar, validarla y ejecutar las funciones de ITree e intervalo según la entrada. En este archivo estan implementadas las siguientes funciones:
+
+\verb|leer_cadena|
+
+\verb|obtener_operacion|
+
+\newpage
+\section{Desarrollo y complicaciones}
+Cuando empezamos con la implementacion del arbol nos dimos cuenta que para obtener la altura de un nodo podiamos crear una función que recorria el arbol y retornaba la altura del nodo o almacenar en cada nodo un nuevo campo que fuera su altura. Decidimos ir por la segunda opción ya que cada vez que quisieramos acceder a la altura de un nodo, con una funcion habia que recorrer todo el arbol, mientras que almacenandola, era de forma directa. Esto era una ventaja a la hora de calcular los balances de los nodos debido a que nos ahorraba recorrer varios subarboles.
+
+Cuando estabamos haciendo las funciones necesarias para el árbol de intervalos necesitamos utilizar algunas funciones auxiliares, pero como no queriamos que estas fueran utilizadas por fuera de las funciones que las llamaban, decidimos no declararlas en la cabecera y de esta forma, cuando se importara la misma, no tendrían acceso a esas funciones.
+
+Mientras trabajabamos en las funciones de Árbol de Intervalos, nos dimos cuenta que podiamos modularizar los intervalos como una estructura para facilitar el agregado, el borrado y la impresion de los mismos, y para mantener una mejor organización del código.
+
+Luego de haber implementado las funciones basicas de intervalo, empezamos a reemplazar los 2 doubles que habiamos declarado en los ITree por Intervalos, pero allí encontramos un problema, que fue que al querer acceder a los extremos del intervalo no podiamos porque la declaracion de intervalos estaba en \verb|intervalo.c| y nosotros importabamos \verb|intervalo.h|. Como los extremos de los intervalos no son modificados despues de crearlo, nos parecio la mejor opcion crear 2 funciones en Intervalo para obtener cada uno de los extremos.
+
+Luego seguimos refactorizando lo ya hecho del árbol.
+
+Realizamos estos cambios hasta llegar a la impresion del arbol con BFS. Esta la habiamos dejado para el final por la necesidad de implementar una Cola. La hicimos en su propio modulo ya que la implementamos con un funcionamiento general.
+
+Habiendo terminado estas 3 partes con todas sus implementaciones, nos pusimos a trabajar en el interprete. El mismo tuvo una version inicial, que parecia funcionar perfectamente pero probando algunos casos leia comandos que no eran validos.
+
+Para facilitar algunas cosas de leer la entrada, decidimos hacer nuestra propia función para leerla, ya que queriamos que la misma devolviera el string leido.
+
+Luego para validar la entrada, decidimos hacer una funcion, que en principio la hicimos con una implementacion que no nos convencía, ya que recorriamos todo el string caracter por caracter, validando cada uno de ellos, y habia casos compliacados de validar y hasta algunos que no nos dimos cuenta de hacerlo. Cuando habiamos terminado la version inicial, seguimos investigando sobre algunas funciones, y en especial nos llamo la atención la función \verb|strtod| y su caracteristica de almacenar el puntero al caracter que no se pudo transformar dentro del string, y esto nos dio una idea para implementar la validación sin necesidad de recorrer todo el string. Implementamos la misma y fue la que dejamos como versión final de la validación.
+\newpage
+\section{Bibliografia}
+\url{https://en.wikipedia.org/wiki/AVL_tree}\\
+\url{https://www.geeksforgeeks.org/avl-tree-set-2-deletion/}\\
+\url{http://www.cplusplus.com/reference/cstdio/scanf/}\\
+\url{https://www.tutorialspoint.com/c_standard_library/c_function_gets.htm}\\
+\url{https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm}\\
+\url{http://www.cplusplus.com/reference/cstdio/sscanf/}\\
+\url{https://stackoverflow.com/questions/27973759/return-value-of-strtod-if-string-equals-to-zero}\\
+\url{https://stackoverflow.com/questions/277772/avoid-trailing-zeroes-in-printf}\\
+\end{document}

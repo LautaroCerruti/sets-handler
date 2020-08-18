@@ -116,7 +116,8 @@ Conjunto *conjunto_agregar_elemento(Conjunto * conjunto, int numero) {
 Conjunto *conjunto_normalize(Conjunto * conjunto) {
   if (!conjunto->conjunto)      // si el conjunto esta vacio
     return conjunto;
-  conjunto->conjunto = glist_merge_sort(conjunto->conjunto, conjunto_comparar_elementos_by_extremo_izquierdo);  // ordena los elementos
+  conjunto->conjunto = glist_merge_sort(conjunto->conjunto, 
+                            conjunto_comparar_elementos_by_extremo_izquierdo);  // ordena los elementos
   GList aux = conjunto->conjunto, nodoBorrar = NULL;
   while (aux != conjunto->conjunto->prev) {     // mientras no este en el ultimo nodo
     if (extremo_menos_uno(((ElementoConjunto *) aux->next->data)->extremoIzq) ==
@@ -214,7 +215,8 @@ Conjunto *conjunto_union(Conjunto conjunto1, Conjunto conjunto2,
           aux2 = aux2->next != conjunto2.conjunto ? aux2->next : NULL;
         }
       } else {
-        newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);     // si no interseca, lo insertamos en el nuevo conjunto
+        newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, 
+                                                           elemAux);     // si no interseca, lo insertamos en el nuevo conjunto
         elemAux = NULL;         // reseteamos el valor de la variable auxiliar
       }
     }
@@ -295,7 +297,8 @@ Conjunto *conjunto_interseccion(Conjunto conjunto1, Conjunto conjunto2,
           ((ElementoConjunto *) aux2->data)->
           extremoDer ? ((ElementoConjunto *) aux1->data)->
           extremoDer : ((ElementoConjunto *) aux2->data)->extremoDer;
-      newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);       // insertamos este nodo
+      newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, 
+                                                         elemAux);       // insertamos este nodo
     }
     // movemos de elemento en el conjunto que tenga el extremo derecho mas chico
     if (((ElementoConjunto *) aux1->data)->extremoDer <
@@ -357,7 +360,8 @@ Conjunto *conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
 Conjunto *conjunto_resta(Conjunto conjunto1, Conjunto conjunto2,
                          char *nombreConjunto) {
   Conjunto *complementoConjunto2 = conjunto_complemento(conjunto2, NULL);       // realizamos el complemento de segundo conjunto
-  Conjunto *newConjunto = conjunto_interseccion(conjunto1, *complementoConjunto2, NULL);        // intersecamos el primer conjunto con el complemento del segundo
+  Conjunto *newConjunto = conjunto_interseccion(conjunto1, 
+                                                *complementoConjunto2, NULL);   // intersecamos el primer conjunto con el complemento del segundo
   newConjunto->nombre = nombreConjunto;
   conjunto_destroy_conjunto(complementoConjunto2);      // destruimos el complemento del segundo conjunto creado como auxiliar
   return newConjunto;           // retornamos la resta de los conjuntos

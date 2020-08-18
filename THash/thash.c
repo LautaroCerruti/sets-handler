@@ -11,7 +11,8 @@ THash tabla_hash_crear() {
 THash tabla_agregar_elemento(SLList * tabla, void *dato, FuncionHasheo hasheo,
                              Compare comparar, Destroy destruir) {
   int valhasheo = hasheo(TAMANIO_TABLA, dato);  // hasheamos el dato para saber el indice de la tabla
-  tabla[valhasheo] = sllist_insert_with_replace(tabla[valhasheo], dato, comparar, destruir);    // insertamos en la linked list que corresonde a ese indice el dato
+  tabla[valhasheo] = sllist_insert_with_replace(tabla[valhasheo], 
+                                                dato, comparar, destruir);    // insertamos en la linked list que corresonde a ese indice el dato
   return tabla;
 }
 
