@@ -32,6 +32,7 @@ Conjunto* conjunto_create_empty(char *nombreConjunto){
 
 Conjunto* conjunto_create_extension(char *nombreConjunto, int n1, int n2){
   Conjunto* conjunto = malloc(sizeof(Conjunto));
+  conjunto->conjunto = glist_create();
   ElementoConjunto *elemAux = malloc(sizeof(ElementoConjunto));
   elemAux->extremoDer = n2;
   elemAux->extremoIzq = n1;
@@ -49,14 +50,18 @@ int extremo_mas_uno(int valor){
   return valor == INT_MAX ? valor : valor + 1;
 }
 
+int extremo_menos_uno(int valor){
+  return valor == INT_MIN ? valor : valor - 1;
+}
+
 Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreConjunto) {
   GList aux1 = conjunto1.conjunto, aux2 = conjunto2.conjunto;
   Conjunto* newConjunto = conjunto_create_empty(nombreConjunto);
-  ElementoConjunto *elemAux;
+  ElementoConjunto *elemAux = NULL;
   if (!conjunto1.conjunto && !conjunto2.conjunto) {
     return newConjunto;
   }
-  while (aux1 || aux2) {
+  while (aux1 && aux2) {
     if (!elemAux) {
       elemAux = malloc(sizeof(ElementoConjunto));
       if (aux1) {
@@ -73,13 +78,13 @@ Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
           aux2 = NULL;
       }
     } else {
-      if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)
-        || conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
-        if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)) {
+      if (conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)
+        || conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
+        if (conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)) {
           conjunto_extension_elemento(elemAux, aux1->data);
           aux1 = aux1->next != conjunto1.conjunto ? aux1->next : NULL;
         }
-        if (conjunto_elemento_interseca(extremo_mas_uno(elemAux->extremoDer), extremo_mas_uno(elemAux->extremoIzq), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
+        if (conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
           conjunto_extension_elemento(elemAux, aux2->data);
           aux2 = aux2->next != conjunto2.conjunto ? aux2->next : NULL;
         }
@@ -88,7 +93,47 @@ Conjunto* conjunto_union(Conjunto conjunto1, Conjunto conjunto2, char *nombreCon
         elemAux = NULL;
       }
     }
-  };
+  }
+  if (!aux1 && aux2) {
+    while (aux2) {
+        if (!elemAux) {
+          elemAux = malloc(sizeof(ElementoConjunto));
+          elemAux->extremoIzq = ((ElementoConjunto*)aux2->data)->extremoIzq;
+          elemAux->extremoDer = ((ElementoConjunto*)aux2->data)->extremoDer;
+          aux2 = aux2->next;
+          if(aux2 == conjunto2.conjunto)
+            aux2 = NULL;
+        } else {
+          if (conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux2->data)->extremoIzq, ((ElementoConjunto*)aux2->data)->extremoDer)) {
+            conjunto_extension_elemento(elemAux, aux2->data);
+            aux2 = aux2->next != conjunto2.conjunto ? aux2->next : NULL;
+          } else {
+            newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
+            elemAux = NULL;
+          }
+        }
+    }
+  }
+  if (aux1 && !aux2) {
+    while (aux1) {
+        if (!elemAux) {
+          elemAux = malloc(sizeof(ElementoConjunto));
+          elemAux->extremoIzq = ((ElementoConjunto*)aux1->data)->extremoIzq;
+          elemAux->extremoDer = ((ElementoConjunto*)aux1->data)->extremoDer;
+          aux1 = aux1->next;
+          if(aux1 == conjunto1.conjunto)
+            aux1 = NULL;
+        } else {
+          if (conjunto_elemento_interseca(extremo_menos_uno(elemAux->extremoIzq), extremo_mas_uno(elemAux->extremoDer), ((ElementoConjunto*)aux1->data)->extremoIzq, ((ElementoConjunto*)aux1->data)->extremoDer)) {
+            conjunto_extension_elemento(elemAux, aux1->data);
+            aux1 = aux1->next != conjunto1.conjunto ? aux1->next : NULL;
+          } else {
+            newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
+            elemAux = NULL;
+          }
+        }
+    }
+  }
   newConjunto->conjunto = glist_insert_last_position(newConjunto->conjunto, elemAux);
   return newConjunto;
 }

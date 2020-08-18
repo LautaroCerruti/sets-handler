@@ -127,7 +127,7 @@ int inserta_conjunto_extension(THash tabla, char* string, char* nombre_conjunto)
   char* resto;
   int numero, bandera = 0;
   Conjunto *conjunto = conjunto_create_empty(nombre_conjunto);
-  while (*string !='}' && *string !='\0' && !bandera) {
+    while (*string !='}' && *string !='\0' && !bandera) {
     numero = strtod(string, &resto);
     if (string == resto || (*resto != ' ' && *resto != ',' && *resto != '}'))
       bandera = 1;
@@ -142,7 +142,7 @@ int inserta_conjunto_extension(THash tabla, char* string, char* nombre_conjunto)
         bandera = 1;
       if (*string == ' ')
         ++string;
-      if (!isdigit(*string) && *string !='}')
+      if (!isdigit(*string) && *string != '-' && *string !='}')
         bandera = 1;
     }
     if (!bandera) {
@@ -222,12 +222,12 @@ int main() {
           ++i;
         if (buffer[i]=='{') {
           ++i;
-          if(isalpha(buffer[i])){
+          if(isalpha(buffer[i]) && buffer[i] != '-'){
             error = inserta_conjunto_comprension(tabla, buffer+i, nombre_primer_conjunto);
-          } else if (isdigit(buffer[i])) {
+          } else if (isdigit(buffer[i]) || buffer[i] == '-') {
             error = inserta_conjunto_extension(tabla, buffer+i, nombre_primer_conjunto);
           } else
-            error = 1;
+                error = 1;
         } else if (buffer[i]=='~') {
           bufferAux = buffer + (i+1);
           operacion = buffer[i];
@@ -285,7 +285,6 @@ int main() {
               aux[i] = *bufferAux;
               ++i;
             }
-
             if (*bufferAux == '\0' && i > 0 && !error) {
               if(aux[i-1] == ' ')
                 aux[i-1] = '\0';
@@ -300,15 +299,14 @@ int main() {
               error = 1;
             if (!error)
               realizar_operacion(tabla, operacion, nombre_primer_conjunto, nombre_segundo_conjunto, nombre_tercer_conjunto);
-
           }
-          if (nombre_segundo_conjunto)
-            free(nombre_segundo_conjunto);
-          if (nombre_tercer_conjunto)
-            free(nombre_tercer_conjunto);
         }
       }
     }
+    if (nombre_segundo_conjunto)
+      free(nombre_segundo_conjunto);
+    if (nombre_tercer_conjunto)
+      free(nombre_tercer_conjunto);
     if (error)
       printf("Entrada incorrecta\n");
   }
