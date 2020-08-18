@@ -1,0 +1,206 @@
+==13191== Memcheck, a memory error detector
+==13191== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==13191== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==13191== Command: ./interprete
+==13191== Parent PID: 4064
+==13191== 
+--13191-- 
+--13191-- Valgrind options:
+--13191--    --leak-check=full
+--13191--    --show-leak-kinds=all
+--13191--    --track-origins=yes
+--13191--    --verbose
+--13191--    --log-file=valgrind-out.txt
+--13191-- Contents of /proc/version:
+--13191--   Linux version 5.3.0-28-generic (buildd@lcy01-amd64-009) (gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)) #30~18.04.1-Ubuntu SMP Fri Jan 17 06:14:09 UTC 2020
+--13191-- 
+--13191-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-avx
+--13191-- Page sizes: currently 4096, max supported 4096
+--13191-- Valgrind library directory: /usr/lib/valgrind
+--13191-- Reading syms from /home/lautaro/Desktop/sets-handler/interprete
+--13191-- Reading syms from /lib/x86_64-linux-gnu/ld-2.27.so
+--13191--   Considering /lib/x86_64-linux-gnu/ld-2.27.so ..
+--13191--   .. CRC mismatch (computed 1b7c895e wanted 2943108a)
+--13191--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.27.so ..
+--13191--   .. CRC is valid
+--13191-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--13191--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--13191--   .. CRC mismatch (computed 41ddb025 wanted 9972f546)
+--13191--    object doesn't have a symbol table
+--13191--    object doesn't have a dynamic symbol table
+--13191-- Scheduler: using generic scheduler lock implementation.
+--13191-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==13191== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-13191-by-lautaro-on-???
+==13191== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-13191-by-lautaro-on-???
+==13191== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-13191-by-lautaro-on-???
+==13191== 
+==13191== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==13191== don't want to do, unless you know exactly what you're doing,
+==13191== or are doing some strange experiment):
+==13191==   /usr/lib/valgrind/../../bin/vgdb --pid=13191 ...command...
+==13191== 
+==13191== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==13191==   /path/to/gdb ./interprete
+==13191== and then give GDB the following command
+==13191==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=13191
+==13191== --pid is optional if only one valgrind process is running
+==13191== 
+--13191-- REDIR: 0x401f2f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x580608c1 (???)
+--13191-- REDIR: 0x401f0d0 (ld-linux-x86-64.so.2:index) redirected to 0x580608db (???)
+--13191-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--13191--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--13191--   .. CRC mismatch (computed 50df1b30 wanted 4800a4cf)
+--13191--    object doesn't have a symbol table
+--13191-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--13191--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--13191--   .. CRC mismatch (computed f893b962 wanted 95ee359e)
+--13191--    object doesn't have a symbol table
+==13191== WARNING: new redirection conflicts with existing -- ignoring it
+--13191--     old: 0x0401f2f0 (strlen              ) R-> (0000.0) 0x580608c1 ???
+--13191--     new: 0x0401f2f0 (strlen              ) R-> (2007.0) 0x04c32db0 strlen
+--13191-- REDIR: 0x401d360 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c33ee0 (strcmp)
+--13191-- REDIR: 0x401f830 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c374f0 (mempcpy)
+--13191-- Reading syms from /lib/x86_64-linux-gnu/libm-2.27.so
+--13191--   Considering /lib/x86_64-linux-gnu/libm-2.27.so ..
+--13191--   .. CRC mismatch (computed 7feae033 wanted b29b2508)
+--13191--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.27.so ..
+--13191--   .. CRC is valid
+--13191-- Reading syms from /lib/x86_64-linux-gnu/libc-2.27.so
+--13191--   Considering /lib/x86_64-linux-gnu/libc-2.27.so ..
+--13191--   .. CRC mismatch (computed b1c74187 wanted 042cc048)
+--13191--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.27.so ..
+--13191--   .. CRC is valid
+--13191-- REDIR: 0x5278c70 (libc.so.6:memmove) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277d40 (libc.so.6:strncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278f50 (libc.so.6:strcasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277790 (libc.so.6:strcat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277d70 (libc.so.6:rindex) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x527a7c0 (libc.so.6:rawmemchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278de0 (libc.so.6:mempcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278c10 (libc.so.6:bcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277d00 (libc.so.6:strncmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277800 (libc.so.6:strcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278d40 (libc.so.6:memset) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x52960f0 (libc.so.6:wcschr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277ca0 (libc.so.6:strnlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277870 (libc.so.6:strcspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278fa0 (libc.so.6:strncasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277840 (libc.so.6:strcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x52790e0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277da0 (libc.so.6:strpbrk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x52777c0 (libc.so.6:index) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5277c70 (libc.so.6:strlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x52826c0 (libc.so.6:memrchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278ff0 (libc.so.6:strcasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278be0 (libc.so.6:memchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5296eb0 (libc.so.6:wcslen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278050 (libc.so.6:strspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278f20 (libc.so.6:stpncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5278ef0 (libc.so.6:stpcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x527a7f0 (libc.so.6:strchrnul) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x5279040 (libc.so.6:strncasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--13191-- REDIR: 0x528b330 (libc.so.6:__strrchr_sse2) redirected to 0x4c32790 (__strrchr_sse2)
+--13191-- REDIR: 0x5271070 (libc.so.6:malloc) redirected to 0x4c2faa0 (malloc)
+--13191-- REDIR: 0x5283e70 (libc.so.6:__strcmp_sse2_unaligned) redirected to 0x4c33da0 (strcmp)
+--13191-- REDIR: 0x528b620 (libc.so.6:__strlen_sse2) redirected to 0x4c32d30 (__strlen_sse2)
+--13191-- REDIR: 0x5290540 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4c32dd0 (strcpy)
+--13191-- REDIR: 0x5271950 (libc.so.6:free) redirected to 0x4c30cd0 (free)
+==13191== 
+==13191== Process terminating with default action of signal 2 (SIGINT)
+==13191==    at 0x52EA081: read (read.c:27)
+==13191==    by 0x5267147: _IO_file_underflow@@GLIBC_2.2.5 (fileops.c:531)
+==13191==    by 0x52683F1: _IO_default_uflow (genops.c:380)
+==13191==    by 0x108C26: leer_cadena (interprete.c:46)
+==13191==    by 0x109B9C: main (interprete.c:224)
+==13191== 
+==13191== HEAP SUMMARY:
+==13191==     in use at exit: 4,156 bytes in 13 blocks
+==13191==   total heap usage: 23 allocs, 10 frees, 6,304 bytes allocated
+==13191== 
+==13191== Searching for pointers to 13 not-freed blocks
+==13191== Checked 78,624 bytes
+==13191== 
+==13191== 4 bytes in 2 blocks are still reachable in loss record 1 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x1094AA: main (interprete.c:243)
+==13191== 
+==13191== 8 bytes in 1 blocks are still reachable in loss record 2 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x109F72: conjunto_agregar_elemento (conjunto.c:101)
+==13191==    by 0x109056: inserta_conjunto_extension (interprete.c:170)
+==13191==    by 0x10961D: main (interprete.c:259)
+==13191== 
+==13191== 8 bytes in 1 blocks are still reachable in loss record 3 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10A91A: conjunto_complemento (conjunto.c:257)
+==13191==    by 0x1091BF: realizar_operacion (interprete.c:196)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 8 bytes in 1 blocks are still reachable in loss record 4 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10AA5F: conjunto_complemento (conjunto.c:282)
+==13191==    by 0x1091BF: realizar_operacion (interprete.c:196)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 16 bytes in 1 blocks are still reachable in loss record 5 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x109E3D: conjunto_create_empty (conjunto.c:72)
+==13191==    by 0x108F54: inserta_conjunto_extension (interprete.c:150)
+==13191==    by 0x10961D: main (interprete.c:259)
+==13191== 
+==13191== 16 bytes in 1 blocks are still reachable in loss record 6 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10B09E: sllist_insert_with_replace (sllist.c:30)
+==13191==    by 0x10B28D: tabla_agregar_elemento (thash.c:13)
+==13191==    by 0x1090E8: inserta_conjunto_extension (interprete.c:178)
+==13191==    by 0x10961D: main (interprete.c:259)
+==13191== 
+==13191== 16 bytes in 1 blocks are still reachable in loss record 7 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x109E3D: conjunto_create_empty (conjunto.c:72)
+==13191==    by 0x10A8D3: conjunto_complemento (conjunto.c:252)
+==13191==    by 0x1091BF: realizar_operacion (interprete.c:196)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 16 bytes in 1 blocks are still reachable in loss record 8 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10B09E: sllist_insert_with_replace (sllist.c:30)
+==13191==    by 0x10B28D: tabla_agregar_elemento (thash.c:13)
+==13191==    by 0x10927B: realizar_operacion (interprete.c:204)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 24 bytes in 1 blocks are still reachable in loss record 9 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10AC0A: glist_insert_last_position (glist.c:20)
+==13191==    by 0x109FA0: conjunto_agregar_elemento (conjunto.c:104)
+==13191==    by 0x109056: inserta_conjunto_extension (interprete.c:170)
+==13191==    by 0x10961D: main (interprete.c:259)
+==13191== 
+==13191== 24 bytes in 1 blocks are still reachable in loss record 10 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10AC0A: glist_insert_last_position (glist.c:20)
+==13191==    by 0x10A9A9: conjunto_complemento (conjunto.c:268)
+==13191==    by 0x1091BF: realizar_operacion (interprete.c:196)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 24 bytes in 1 blocks are still reachable in loss record 11 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10AC0A: glist_insert_last_position (glist.c:20)
+==13191==    by 0x10AA9C: conjunto_complemento (conjunto.c:285)
+==13191==    by 0x1091BF: realizar_operacion (interprete.c:196)
+==13191==    by 0x1097DF: main (interprete.c:282)
+==13191== 
+==13191== 3,992 bytes in 1 blocks are still reachable in loss record 12 of 12
+==13191==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13191==    by 0x10B1D3: tabla_hash_crear (thash.c:4)
+==13191==    by 0x1092FC: main (interprete.c:215)
+==13191== 
+==13191== LEAK SUMMARY:
+==13191==    definitely lost: 0 bytes in 0 blocks
+==13191==    indirectly lost: 0 bytes in 0 blocks
+==13191==      possibly lost: 0 bytes in 0 blocks
+==13191==    still reachable: 4,156 bytes in 13 blocks
+==13191==         suppressed: 0 bytes in 0 blocks
+==13191== 
+==13191== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13191== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
