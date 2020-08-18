@@ -135,7 +135,8 @@ int inserta_conjunto_comprension(THash tabla, char *string,
     ++string;
   if (*string != '}')
     return 1;
-  // si el extremo izquiero es mas grande al derecho crea un conjunto vacio, en otro caso, crea el intervalo
+  // si el extremo izquiero es mas grande al derecho crea un conjunto vacio,
+  // en otro caso, crea el intervalo
   conjunto =
       numero1 >
       numero2 ? conjunto_create_empty(nombre_conjunto) :
@@ -153,7 +154,8 @@ int inserta_conjunto_comprension(THash tabla, char *string,
   se fija que respete el formato y agrega el conjunto a la tabla.
   Retorna 1 si hubo un error en la sintaxis, 0 en caso contrario
 */
-int inserta_conjunto_extension(THash tabla, char *string, char *nombre_conjunto) {
+int inserta_conjunto_extension(THash tabla, char *string, 
+                               char *nombre_conjunto) {
   char *resto;
   int numero, bandera = 0;
   Conjunto *conjunto = conjunto_create_empty(nombre_conjunto);
@@ -175,14 +177,17 @@ int inserta_conjunto_extension(THash tabla, char *string, char *nombre_conjunto)
         bandera = 1;
     }
     if (!bandera) {
-      conjunto = conjunto_agregar_elemento(conjunto, numero);   // va agregando los elementos a medida que los lee
+      // va agregando los elementos a medida que los lee
+      conjunto = conjunto_agregar_elemento(conjunto, numero);  
     }
   }
   if (bandera || (*string == '}' && *(string + 1) != '\0')) {
-    conjunto_destroy_conjunto(conjunto);        // si algo fallo destruye el conjunto creado
+    // si algo fallo destruye el conjunto creado
+    conjunto_destroy_conjunto(conjunto); 
     return 1;
   } else {
-    conjunto = conjunto_normalize(conjunto);    // si la sintaxis estaba bien, ordena y normaliza el conjunto creado
+    // si la sintaxis estaba bien, ordena y normaliza el conjunto creado
+    conjunto = conjunto_normalize(conjunto);    
     tabla =
         tabla_agregar_elemento(tabla, conjunto, conjunto_hash,
                                conjunto_compara_nombre,
@@ -207,7 +212,10 @@ void realizar_operacion(THash tabla, char operacion,
                             comparar_conjunto_string),
       *segundoConjuntoOperacion = NULL, *conjuntoResultado;
   if (operacion != '~')         // si la operacion no es complemento
-    segundoConjuntoOperacion = tabla_buscar_elemento(tabla, nombre_tercer_conjunto, hasheo_string, comparar_conjunto_string);   // busca el segundo conjunto a operar
+    // busca el segundo conjunto a operar
+    segundoConjuntoOperacion = tabla_buscar_elemento(tabla, nombre_tercer_conjunto, 
+                                                     hasheo_string, 
+                                                     comparar_conjunto_string);   
   if ((primerConjuntoOperacion && operacion == '~')
       || (primerConjuntoOperacion && segundoConjuntoOperacion)) {
     if (operacion == '~')
@@ -261,7 +269,7 @@ int main() {
     if (buffer[0] == 'i' && buffer[1] == 'm' && buffer[2] == 'p'
         && buffer[3] == 'r' && buffer[4] == 'i' && buffer[5] == 'm'
         && buffer[6] == 'i' && buffer[7] == 'r' && buffer[8] == ' ')
-      imprimir(tabla, buffer + 9);      // si el comando es imprimir ejecuta esta funcion
+      imprimir(tabla, buffer + 9); // si el comando es imprimir ejecuta esta funcion
     else {
       for (i = 0;
            i < MAX_NOMBRE_CONJUNTO && buffer[i] != '=' && buffer[i] != '\0';
@@ -383,9 +391,9 @@ int main() {
       }
     }
     if (nombre_segundo_conjunto)
-      free(nombre_segundo_conjunto);    // libera la memoria de los nombres de los conjuntos a operar
+      free(nombre_segundo_conjunto); // libera la memoria de los nombres de los conjuntos a operar
     if (nombre_tercer_conjunto)
-      free(nombre_tercer_conjunto);     // libera la memoria de los nombres de los conjuntos a operar
+      free(nombre_tercer_conjunto);  // libera la memoria de los nombres de los conjuntos a operar
     if (error) {
       printf("Entrada incorrecta\n");
       free(nombre_primer_conjunto);
