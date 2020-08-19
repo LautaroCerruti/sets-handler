@@ -34,182 +34,200 @@
 %opening
 \begin{document}
 	
-\title{TP Árbol De Intervalos}
-\author{Cassinerio Marcos - Cerruti Lautaro}
-\date{Junio 7, 2020\footnote{Updated \today}}
+\title{TP Final Interprete de Conjuntos}
+\author{Cerruti Lautaro}
+\date{Agosto 15, 2020\footnote{Updated \today}}
 \maketitle
 \newpage
 
 \section{Introducción}
-El objetivo de este trabajo fue implementar un árbol AVL de Intervalos. Adicionalmente implementamos un intérprete para poder utilizar el árbol y sus funciones desde la entrada estándar. 
+El objetivo de este trabajo práctico es la implementación de un intérprete para operar con
+conjuntos numéricos. Entre las operaciones que se deberán soportar se encuentran: unión,
+intersección, resta y complemento.
 
 \section{Compilado y ejecucion}
 Para compilar el proyecto abrimos una terminal, y una vez ubicados en el directorio del proyecto, ejecutamos el comando \verb|make|. Esto nos generará el ejecutable del intérprete.\\\\
 El mismo lo corremos con: 
 
 \verb|./interprete|
-\\\\Este programa nos permitirá ingresar comandos para manipular un árbol. Los comando aceptados son:
+\\\\Este programa nos permitirá ingresar comandos para operar con conjuntos. Dados 3 conjuntos con nombres \verb|alias1|, \verb|alias2| y \verb|alias3|, los comandos aceptados son:
  \begin{itemize}
- 	\item \verb|i [a, b]|: inserta el intervalo [a, b] en el árbol. Ej: \verb|i [5.4, 6.3]|.
- 	\item \verb|e [a, b]|: elimina el intervalo [a, b] del árbol. Ej: \verb|e [2.2, 1e4]|.
- 	\item \verb|? [a, b]|: interseca el intervalo [a, b] con los intervalos del árbol. Ej: \verb|? [-1, 0.5]|.
- 	\item \verb|dfs|: imprime los intervalos del árbol con recorrido primero en profundidad.
- 	\item \verb|bfs|: imprime los intervalos del árbol con recorrido primero a lo ancho.
- 	\item \verb|salir|: destruye el árbol y termina el programa.
+ 	\item \verb|alias1 = alias2| \textbar \verb| alias3|: une los conjuntos alias2 y alias3 y almacena el resultado en el conjunto alias1.
+ 	\item \verb|alias1 = alias2| \& \verb| alias3|: interseca los conjuntos alias2 y alias3 y almacena el resultado en el conjunto alias1.
+ 	\item \verb|alias1 = alias2| \textendash \verb| alias3|: resta al conjunto alias2 el conjunto alias3 y almacena el resultado en el conjunto alias1.
+ 	\item \verb|alias1 = | \textasciitilde \verb|alias2|: calcula el complemento de alias2 y lo almacena en el conjunto alias1.
+ 	\item \verb|alias1 = {1, 2, 3, 4, 5}|: almacena en alias1 el conjunto definido por extensión.
+ 	\item \verb|alias1 = {x: 1 <= x <= 5}|: almacena en alias1 el conjunto definido por comprensión.
+ 	\item \verb|salir|: destruye la tabla con los conjuntos y termina el programa.
  \end{itemize}
-Los primeros 3 comandos tienen que respetar el formato \verb|caracterOperacion [a, b]|.
 \section{Organizacion de los archivos}
-El programa se divide en 4 partes: Intervalo, Árbol de Intervalos, Cola (Queue) e intérprete\\
-Por un lado tenemos la implementación y declaración de Queue en los archivos \verb|queue.c| y \verb|queue.h| respectivamente.\\
-Por otro lado tenemos Intervalo hecho de la misma manera, en los archivos \verb|intervalo.c| y \verb|intervalo.h|.\\
-Luego tenemos al Árbol de Intervalos que hace uso de las dependecias queue e intervalo. Su implementación y declaración se encuentra en los archivos \verb|itree.c| y \verb|itree.h|.\\
-Finalmente tenemos en el archivo \verb|interprete.c| el intéprete que es nuestra interfaz del progragama para manipular los Árboles de Intervalos.
+El programa se divide en 5 partes: Simple Linked List, Glist que es una Circular Duble linked List, THash, Conjunto e intérprete\\
+Por un lado tenemos la implementación y declaración de SLList en los archivos \verb|sllist.c| y \verb|sllist.h| respectivamente.\\
+Por otro lado tenemos GList hecho de la misma manera, en los archivos \verb|glist.c| y \verb|glist.h|.\\
+Luego tenemos THash que hace uso de SLList. Su implementación y declaración se encuentra en los archivos \verb|thash.c| y \verb|thash.h|.\\
+Luego tenemos Conjunto que hace uso de Glist. Su implementación y declaración se encuentra en los archivos \verb|conjunto.c| y \verb|conjunto.h|.\\
+Finalmente tenemos en el archivo \verb|interprete.c| el intéprete que es nuestra interfaz del progragama para manipular los Conjuntos.
 \newpage
 \section{Implementaciones y estructuras}
-\subsection{Queue}
-La implementación de Queue esta basada en una Lista Doblemente Enlazada Circular, definida de la siguiente forma:
+\subsection{GList}
+La implementación de GList es una Lista Doblemente Enlazada Circular, definida de la siguiente forma:
 
 \begin{lstlisting}[language=C]
-struct _QNode {
-  void *dato;
-  struct _QNode *ant;
-  struct _QNode *sig;
-};
+typedef struct _GNode {
+  void *data;
+  struct _GNode *prev;
+  struct _GNode *next;
+} GNode;
 
-typedef struct _QNode QNode;
-
-typedef QNode *Queue;
+typedef GNode *GList;
 \end{lstlisting}
-En su cabecera declaramos sus únicas 3 funciones:
+En su cabecera declaramos sus funciones:
 
-\verb|queue_crear|
+\verb|glist_create|
 
-\verb|queue_pop|
+\verb|glist_destroy|
 
-\verb|queue_push|
+\verb|glist_pop|
 
-\verb|queue_destruir|
+\verb|glist_concat|
+
+\verb|glist_insert_last_position|
+
+\verb|glist_merge|
+
+\verb|glist_split|
+
+\verb|glist_merge_sort|
 \\\\
-La función \verb|queue_destruir| nunca es utilizada, pero para que la implentación de la Cola sea general se vio la necesidad de hacerla.\\
-Todas las implementaciones se encuentran en \verb|queue.c|.
-\subsection{Intervalo}
-La declaración de intervalo es la siguiente:
+Todas las implementaciones se encuentran en \verb|glist.c|.
+\subsection{SLList}
+La declaración de SLList es la siguiente:
 
 \begin{lstlisting}[language=C]
-struct _Intervalo{
-  double extremoIzq;
-  double extremoDer;
+struct _SLNode {
+void *data;
+struct _SLNode *next;
 };
 
-typedef struct _Intervalo Intervalo;
+typedef struct _SLNode SLNode;
+
+typedef SLNode *SLList;
 \end{lstlisting}
 En su cabecera declaramos las siguientes funciones:
 
-\verb|intervalo_crear|
+\verb|sllist_create|
 
-\verb|intervalo_destruir|
+\verb|sllist_destroy|
 
-\verb|intervalo_extremo_izq|
+\verb|sllist_insert_with_replace|
 
-\verb|intervalo_extremo_der|
-
-\verb|intervalo_valido|
-
-\verb|intervalo_interseca|
-
-\verb|intervalo_imprimir|\\\\
-Sus implentaciones se encuentran en \verb|intervalo.c|.
+\verb|sllist_find|\\\\
+Sus implentaciones se encuentran en \verb|sllist.c|.
 \newpage
-\subsection{ITree}
-El Árbol de Intervalos se encuentra definido de la siguiente manera:
+\subsection{THash}
+La Tabla Hash THash es nada mas que un array de SLList, y se encuentra definida de la siguiente manera:
 
 \begin{lstlisting}[language=C]
-struct _INodo {
-  Intervalo *intervalo;
-  double maxExtremoDer;
-  int altura;
-  struct _INodo *izq;
-  struct _INodo *der;
-};
-
-typedef struct _INodo INodo;
-
-typedef INodo *ITree;
+typedef SLList* THash;
 \end{lstlisting}
 En su archivo cabecera se encuentran declaradas las siguientes funciones:
 
-\verb|itree_crear|
+\verb|tabla_hash_crear|
 
-\verb|itree_destruir|
+\verb|tabla_agregar_elemento|
 
-\verb|itree_altura|
+\verb|tabla_buscar_elemento|
 
-\verb|itree_insertar|
+\verb|tabla_destruir|\\
+Sus implementaciones se encuentran en el archivo \verb|thash.c|.
 
-\verb|itree_eliminar|
+\subsection{Conjunto}
+Los Conjuntos se encuentran definidos de la siguiente manera:
 
-\verb|itree_intersecar|
+\begin{lstlisting}[language=C]
+typedef struct {
+  char *nombre;
+  GList conjunto;
+} Conjunto;
+\end{lstlisting}
+En su archivo cabecera se encuentran declaradas las siguientes funciones:
 
-\verb|itree_recorrer_dfs|
+\verb|conjunto_compara_nombre|
 
-\verb|itree_recorrer_bfs|
+\verb|conjunto_hash|
 
-\verb|itree_aplicar_a_intervalo|
-\\
-Sus implementaciones se encuentran en el archivo \verb|itree.c|, junto con las implementaciones de las funciones:
+\verb|conjunto_create_empty|
 
-\verb|itree_nuevo_nodo|
+\verb|conjunto_create_extension|
 
-\verb|itree_calcular_max_extremo_der|
+\verb|conjunto_destroy_conjunto|
 
-\verb|itree_calcular_altura|
+\verb|conjunto_agregar_elemento|
 
-\verb|itree_actualizar_datos|
+\verb|conjunto_normalize|
 
-\verb|rotacion_izquierda|
+\verb|conjunto_imprimir|
 
-\verb|rotacion_derecha|
+\verb|conjunto_union|
 
-\verb|itree_balance|
+\verb|conjunto_interseccion|
 
-\verb|itree_balancear|
+\verb|conjunto_complemento|
 
-\verb|itree_obtener_menor|
+\verb|conjunto_resta|
 
+\verb|comparar_conjunto_string|\\
+Sus implementaciones se encuentran en el archivo \verb|conjunto.c|, junto con las implementaciones de las funciones:
+
+\verb|conjunto_elemento_valores_interseca|
+
+\verb|conjunto_comparar_elementos_by_extremo_izquierdo|
+
+\verb|conjunto_destroy_elemento|
+
+\verb|conjunto_extension_elemento|
+
+\verb|extremo_mas_uno|
+
+\verb|extremo_menos_uno|
+
+\newpage
 \subsection{Interprete}
-El interprete se encuentra el main del programa, este se encarga de leer la entrada estandar, validarla y ejecutar las funciones de ITree e intervalo según la entrada. En este archivo estan implementadas las siguientes funciones:
+El interprete se encuentra el main del programa, este se encarga de leer la entrada estandar, validarla, buscar los conjuntos, realizar las operaciones y almacenar los resultados en la tabla. En este archivo estan implementadas las siguientes funciones:
+
+\verb|check_alphanumeric|
+
+\verb|hasheo_string|
 
 \verb|leer_cadena|
 
-\verb|obtener_operacion|
+\verb|imprimir|
 
-\newpage
+\verb|inserta_conjunto_comprension|
+
+\verb|inserta_conjunto_extension|
+
+\verb|realizar_operacion|
+
+\section{Formatos de Alias Aceptados y Mensajes Devueltos}
+Los formatos de alias aceptados son nombres alfanumericos, o sea, letras y numeros mezclados. No se aceptan caracteres que no sean del código ASCII.
+\\\\
+Los mensajes de error devueltos por el sistema son:
+
+\begin{itemize}
+	\item \verb|Entrada Incorrecta|: cuando se escribió algo que no fue reconocido como comando valido (simbolos no reconocidos, alias con caracteres no aceptados, etc.).
+	\item \verb|Conjunto inexistente|: cuando todo el formato es valido, pero alguno de los conjuntos a operar no existe.
+\end{itemize}
 \section{Desarrollo y complicaciones}
-Cuando empezamos con la implementacion del arbol nos dimos cuenta que para obtener la altura de un nodo podiamos crear una función que recorria el arbol y retornaba la altura del nodo o almacenar en cada nodo un nuevo campo que fuera su altura. Decidimos ir por la segunda opción ya que cada vez que quisieramos acceder a la altura de un nodo, con una funcion habia que recorrer todo el arbol, mientras que almacenandola, era de forma directa. Esto era una ventaja a la hora de calcular los balances de los nodos debido a que nos ahorraba recorrer varios subarboles.
-
-Cuando estabamos haciendo las funciones necesarias para el árbol de intervalos necesitamos utilizar algunas funciones auxiliares, pero como no queriamos que estas fueran utilizadas por fuera de las funciones que las llamaban, decidimos no declararlas en la cabecera y de esta forma, cuando se importara la misma, no tendrían acceso a esas funciones.
-
-Mientras trabajabamos en las funciones de Árbol de Intervalos, nos dimos cuenta que podiamos modularizar los intervalos como una estructura para facilitar el agregado, el borrado y la impresion de los mismos, y para mantener una mejor organización del código.
-
-Luego de haber implementado las funciones basicas de intervalo, empezamos a reemplazar los 2 doubles que habiamos declarado en los ITree por Intervalos, pero allí encontramos un problema, que fue que al querer acceder a los extremos del intervalo no podiamos porque la declaracion de intervalos estaba en \verb|intervalo.c| y nosotros importabamos \verb|intervalo.h|. Como los extremos de los intervalos no son modificados despues de crearlo, nos parecio la mejor opcion crear 2 funciones en Intervalo para obtener cada uno de los extremos.
-
-Luego seguimos refactorizando lo ya hecho del árbol.
-
-Realizamos estos cambios hasta llegar a la impresion del arbol con BFS. Esta la habiamos dejado para el final por la necesidad de implementar una Cola. La hicimos en su propio modulo ya que la implementamos con un funcionamiento general.
-
-Habiendo terminado estas 3 partes con todas sus implementaciones, nos pusimos a trabajar en el interprete. El mismo tuvo una version inicial, que parecia funcionar perfectamente pero probando algunos casos leia comandos que no eran validos.
-
-Para facilitar algunas cosas de leer la entrada, decidimos hacer nuestra propia función para leerla, ya que queriamos que la misma devolviera el string leido.
-
-Luego para validar la entrada, decidimos hacer una funcion, que en principio la hicimos con una implementacion que no nos convencía, ya que recorriamos todo el string caracter por caracter, validando cada uno de ellos, y habia casos compliacados de validar y hasta algunos que no nos dimos cuenta de hacerlo. Cuando habiamos terminado la version inicial, seguimos investigando sobre algunas funciones, y en especial nos llamo la atención la función \verb|strtod| y su caracteristica de almacenar el puntero al caracter que no se pudo transformar dentro del string, y esto nos dio una idea para implementar la validación sin necesidad de recorrer todo el string. Implementamos la misma y fue la que dejamos como versión final de la validación.
+La principal complicación de este trabajo fue pensar con que estructura sería mas eficiente, en un principio habia pensado en un AVL de intervalos, pero esta era bastante difícil de implementar, y luego de pensarla varios dias me di cuenta que como tenia que crear arboles nuevo por las operaciones y no modificiar los existentes, el proceso de incersión de los nodos se hacia muy lento. Entonces pense en implementar los conjuntos como una lista de intervalos ordenados que no se colapsen unos con otros.
+\\Una decisión que considero importante que tome fue la implementación de la resta, ya que no pensaba hacerla utilizando las demas operaciones, pero me di cuenta que la mejora era muy pequeña y que no aprovechaba nada de la teoria de conjuntos. Por lo que decidí finalmente implementar una resta como la intersección con el complemento.
+\\Luego de pensar como implementaría todo con esta estructura, decidí quedarme con las listas. La mayor dificultad que tuve fue como hacer la definición de un conjunto por extensión, pero decidí aprovechar lo ya realizado en trabajos anteriores y optar por insertar todos los elementos, ordenarlos con Merge Sort y luego unificar los elementos si era posible.
+\\Y definitivamente la parte que me tomo mas tiempo fue el intérprete, porque no quería hacerlo muy estricto con la entrada, pero tampoco quería que rompiera o que permitiera cosas que no debía. Luego de muchas horas de desarrollo llegue al estado final al cual no le encontré fallas.
+\\Realice todos los testeos que se me ocurrieron y también los brindados por la catedra y el funcionamiento del programa es correcto. También utilice Valgrind para fijarme los leaks de memoria, y los que había fueron arreglados.
 \newpage
-\section{Bibliografia}
-\url{https://en.wikipedia.org/wiki/AVL_tree}\\
-\url{https://www.geeksforgeeks.org/avl-tree-set-2-deletion/}\\
-\url{http://www.cplusplus.com/reference/cstdio/scanf/}\\
-\url{https://www.tutorialspoint.com/c_standard_library/c_function_gets.htm}\\
-\url{https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm}\\
-\url{http://www.cplusplus.com/reference/cstdio/sscanf/}\\
-\url{https://stackoverflow.com/questions/27973759/return-value-of-strtod-if-string-equals-to-zero}\\
-\url{https://stackoverflow.com/questions/277772/avoid-trailing-zeroes-in-printf}\\
+\section{Bibliografía}
+\url{https://es.wikipedia.org/wiki/Tabla_hash}\\
+\url{https://cp-algorithms.com/string/string-hashing.html}\\
+\url{http://www.cplusplus.com/reference/cstdlib/strtod/}\\
+\url{https://stackoverflow.com/questions/12824134/undefined-reference-to-pow-in-c-despite-including-math-h}\\
 \end{document}

@@ -254,13 +254,14 @@ int main() {
   buffer[0] = '\0';
   THash tabla = tabla_hash_crear();     // crea la tabla
 
-//   printf("|: Union\n");
-//   printf("e: Eliminar\n");
-//   printf("?: Intersecar\n");
-//   printf("Estos comandos deberan ser de la manera:\n");
-//   printf("  'CaracterOperacion [Numero1, Numero2]'\n");
-//   printf("dfs, bfs: Mostrar arbol\n");
-//   printf("salir: Finalizar programa\n\n");
+  printf("alias1 = alias2 | alias3: Union\n");
+  printf("alias1 = alias2 & alias3: Interseccion\n");
+  printf("alias1 = alias2 - alias3: Resta\n");
+  printf("alias1 = ~alias2: Complemento\n");
+  printf("alias1 = {N1, N2, N3, ...}: Conjunto por extension'\n");
+  printf("alias1 = {x : N1 <= x <= N2}: Conjunto por comprension\n");
+  printf("imprimir alias1: Imprimir\n");
+  printf("salir: Finalizar programa\n\n");
   while (strcmp(leer_cadena(buffer), "salir\0")) {      // si es distinto de salir
     error = 0;
     nombre_primer_conjunto = NULL;
@@ -395,7 +396,7 @@ int main() {
     if (nombre_tercer_conjunto)
       free(nombre_tercer_conjunto);  // libera la memoria de los nombres de los conjuntos a operar
     if (error) {
-      printf("Entrada incorrecta\n");
+      printf("Entrada Incorrecta\n");
       free(nombre_primer_conjunto);
     }
   }
