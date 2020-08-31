@@ -317,8 +317,8 @@ Conjunto *conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
   if (aux && ((ElementoConjunto *) aux->data)->extremoIzq == INT_MIN
       && ((ElementoConjunto *) aux->data)->extremoDer == INT_MAX)
     return newConjunto;         // si el conunto es el universo, retornamos un conjunto vacio
-  elemAux = malloc(sizeof(ElementoConjunto));
   if (!aux) {
+    elemAux = malloc(sizeof(ElementoConjunto));
     elemAux->extremoIzq = INT_MIN;
     elemAux->extremoDer = INT_MAX;
     newConjunto->conjunto =
@@ -327,6 +327,7 @@ Conjunto *conjunto_complemento(Conjunto conjunto, char *nombreConjunto) {
   }
   // si el extremo izquiero del primer nodo es distinto al INT_MIN
   if (((ElementoConjunto *) aux->data)->extremoIzq != INT_MIN) {
+    elemAux = malloc(sizeof(ElementoConjunto));
     elemAux->extremoIzq = INT_MIN;
     elemAux->extremoDer = ((ElementoConjunto *) aux->data)->extremoIzq - 1;
     newConjunto->conjunto =
